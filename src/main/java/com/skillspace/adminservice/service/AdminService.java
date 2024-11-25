@@ -4,6 +4,7 @@ import com.skillspace.adminservice.model.Users;
 import com.skillspace.adminservice.repository.UserRepository;
 import com.skillspace.adminservice.util.UsernameUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,17 +29,20 @@ public class AdminService {
         return admins;
     }
 
-    public Map<String,String> addAdmin(String email,String password){
+    public ResponseEntity<String> addAdmin(String email,String password){
         Users admin = new Users();
+        int cnt = userRepository.ifExistEmail(email);
+        if(cnt==1){
+
+            return ResponseEntity.status(403).body("Email Already Exist");
+        }
         admin.setEmail(email);
         admin.setPassword(passwordEncoder.encode(password));
         admin.setRole("admin");
         admin.setEmailStatus(false);
         admin.setProfileStatus(false);
-        Map<String,String> admins = new HashMap<>();
         userRepository.save(admin);
-        admins.put("Message","Success");
-        return admins;
+        return ResponseEntity.status(201).body("Success");
     }
 
     public boolean getEmailStatus(String email){

@@ -26,4 +26,7 @@ public interface UserRepository extends JpaRepository<Users,String> {
     @Transactional
     @Query(value = "delete from users where email =:email",nativeQuery = true)
     public void deleteEmail(@Param("email") String email);
+
+    @Query(value = "select count(*) from users where email =:email",nativeQuery = true)
+    public int ifExistEmail(@Param("email") String email);
 }
